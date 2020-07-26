@@ -1,0 +1,61 @@
+buildscript {
+    dependencies {
+        classpath group: 'de.dynamicfiles.projects.gradle.plugins', name: 'javafx-gradle-plugin', version: '8.8.2'
+    }
+    repositories {
+        mavenCentral()
+    }
+}
+
+plugins {
+    id 'java'
+    id 'application'
+    id "org.openjfx.javafxplugin" version "0.0.9"
+    id "com.github.johnrengelman.shadow" version "6.0.0"
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    //implementation 'org.openjfx:javafx-controls:11.0.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
+}
+
+application {
+    mainClassName = 'ch.so.agi.ilivalidator.Main'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+javafx {
+    version = "11"
+    modules = [ 'javafx.controls', 'javafx.fxml' ]
+}
+
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Main-Class': 'ch.so.agi.ilivalidator.Main'
+    }
+    
+    baseName = project.name + '-all'
+    from { 
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } 
+    }
+    
+    with jar
+}
+
+/*
+jfx {
+    // minimal requirement for jfxJar-task
+    mainClass = 'ch.so.agi.ilivalidator.Main'
+    
+    // minimal requirement for jfxNative-task
+    vendor = 'ACME Inc.'
+}
+*/
